@@ -1,0 +1,24 @@
+name: "💡 Sugerir uma melhoria"
+description: "Compartilhe uma ideia ou necessidade para o Eletroguia."
+title: "[Ideia]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: Qual necessidade a ideia atende?
+      description: Explique a tarefa ou dificuldade que você quer resolver.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Como você imagina a melhoria?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Exemplos ou contexto adicional
+    validations:
+      required: false
