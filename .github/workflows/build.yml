@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -33,3 +36,15 @@ jobs:
           name: Eletroguia-Setup
           path: dist\Eletroguia-Setup.exe
           retention-days: 30
+
+      - name: Publicar instalador na branch "artifact" (via git, sem Azure Blob)
+        shell: pwsh
+        run: |
+          git config user.email "build@eletroguia.local"
+          git config user.name "Eletroguia Build"
+          git checkout --orphan artifact
+          git rm -rf . --quiet
+          Copy-Item dist\Eletroguia-Setup.exe .
+          git add Eletroguia-Setup.exe
+          git commit -m "Build $env:GITHUB_RUN_NUMBER"
+          git push --force origin artifact
