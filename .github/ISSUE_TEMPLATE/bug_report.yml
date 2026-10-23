@@ -1,0 +1,43 @@
+name: "🐞 Relatar um problema"
+description: "Conte o que aconteceu para ajudar a reproduzir e corrigir."
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "Não inclua dados pessoais, dados de clientes ou informações confidenciais."
+  - type: input
+    id: version
+    attributes:
+      label: Versão do Eletroguia
+      description: Informe a versão indicada no instalador ou na janela do aplicativo.
+      placeholder: "Ex.: versão de testes"
+    validations:
+      required: false
+  - type: textarea
+    id: steps
+    attributes:
+      label: Como reproduzir
+      description: Quais passos você seguiu?
+      placeholder: "1. Abri... 2. Selecionei..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: O que você esperava?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: O que aconteceu?
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Windows e observações
+      description: Versão do Windows e qualquer detalhe útil.
+    validations:
+      required: false
