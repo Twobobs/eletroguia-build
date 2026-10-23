@@ -1,0 +1,51 @@
+ELETROGUIA — pacote para Windows (64 bits)
+===========================================
+
+O que é isto
+------------
+Um projeto .NET 8 (C#) que embute o seu Eletroguia.html dentro de um
+programa de Windows nativo, usando WebView2 (o motor do Edge) para
+mostrá-lo numa janela própria — sem barra de endereço, sem botão
+direito, sem DevTools. O HTML fica cifrado (AES-256-GCM) dentro do
+.exe, não gravado em disco em texto claro.
+
+O que isso protege de fato, e o que não protege
+------------------------------------------------
+- Impede o usuário comum de abrir o .exe num editor de texto e ver o
+  HTML, e dificulta extrair o código pelo Gerenciador de Tarefas ou
+  pelo "Ver código-fonte" do navegador (não existe mais — é um app
+  nativo, não uma aba do Chrome).
+- NÃO é inquebrável. Quem souber programação e tiver ferramentas de
+  engenharia reversa de .NET consegue, com esforço, extrair a chave
+  do binário e decifrar o HTML. Nenhuma proteção client-side é.
+- "Injeção de SQL" não se aplica aqui: o app não tem banco de dados
+  nem servidor, então esse risco específico não existe no seu caso.
+
+Como gerar o instalador (feito por você, no Windows)
+------------------------------------------------------
+Eu não tenho um Windows disponível neste ambiente para compilar e
+testar o .exe, então os passos finais são seus:
+
+1. Instale o .NET 8 SDK:
+   https://dotnet.microsoft.com/download/dotnet/8.0
+2. Instale o Inno Setup 6.3+ e marque a opção de adicionar ao PATH:
+   https://jrsoftware.org/isinfo.php
+3. Se for atualizar o conteúdo do app, troque o arquivo
+   html\Eletroguia.html por uma nova versão e rode:
+     node tools\encrypt.mjs
+   (ou qualquer Node.js recente; isso recria Resources\app.bin e
+   grava a chave cifrada dentro de Program.cs)
+4. Rode build.bat (duplo clique, ou pelo terminal)
+5. O instalador final fica em dist\Eletroguia-Setup.exe — esse é o
+   arquivo que você distribui. Ele baixa e instala o WebView2 Runtime
+   automaticamente se o computador do usuário não tiver.
+
+Arquivos
+--------
+Eletroguia.csproj   projeto .NET (WinForms + WebView2, publicação
+                     single-file self-contained para win-x64)
+Program.cs           decifra o HTML em memória e abre a janela
+html\Eletroguia.html o app original (edite aqui, depois recifre)
+tools\encrypt.mjs    gera Resources\app.bin e grava a chave no Program.cs
+Eletroguia.iss       script do instalador (Inno Setup)
+build.bat            publica o .exe e gera o instalador, nessa ordem

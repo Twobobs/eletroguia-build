@@ -1,0 +1,35 @@
+name: Build Eletroguia (Windows)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publicar o executável
+        run: dotnet publish Eletroguia.csproj -c Release -o publish
+
+      - name: Instalar Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Gerar instalador
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" Eletroguia.iss
+        shell: pwsh
+
+      - name: Publicar instalador como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: Eletroguia-Setup
+          path: dist\Eletroguia-Setup.exe
+          retention-days: 30
