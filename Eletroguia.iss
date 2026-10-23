@@ -1,4 +1,4 @@
-﻿#define AppName "Eletroguia"
+#define AppName "Eletroguia"
 #define AppVer "1.0.0"
 
 [Setup]
@@ -11,6 +11,7 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir=dist
 OutputBaseFilename=Eletroguia-Setup
+SetupIconFile=Resources\Eletroguia.ico
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
@@ -21,14 +22,14 @@ PrivilegesRequired=admin
 Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "Criar atalho na Área de Trabalho"; Flags: unchecked
+Name: "desktopicon"; Description: "Criar atalho na Área de Trabalho"; Flags: checkedonce
 
 [Files]
 Source: "publish\Eletroguia.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "{app}\Eletroguia.exe"
-Name: "{autodesktop}\{#AppName}"; Filename: "{app}\Eletroguia.exe"; Tasks: desktopicon
+Name: "{autodesktop}\Eletroguia Cálculo de Motores"; Filename: "{app}\Eletroguia.exe"; Comment: "Sistema de Cálculo para Motores de Indução Monofásicos e Trifásicos"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\Eletroguia.exe"; Description: "Abrir o Eletroguia"; Flags: nowait postinstall skipifsilent

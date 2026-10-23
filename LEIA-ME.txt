@@ -8,6 +8,11 @@ programa de Windows nativo, usando WebView2 (o motor do Edge) para
 mostrá-lo numa janela própria — sem barra de endereço, sem botão
 direito, sem DevTools. O HTML fica cifrado (AES-256-GCM) dentro do
 .exe, não gravado em disco em texto claro.
+A janela do Windows e a interface interna abrem maximizadas. O instalador
+coloca o programa em Arquivos de Programas\Eletroguia e cria, por padrão,
+um atalho na Área de Trabalho chamado "Eletroguia Cálculo de Motores".
+A descrição do atalho é "Sistema de Cálculo para Motores de Indução
+Monofásicos e Trifásicos".
 
 O que isso protege de fato, e o que não protege
 ------------------------------------------------
@@ -48,4 +53,5 @@ Program.cs           decifra o HTML em memória e abre a janela
 html\Eletroguia.html o app original (edite aqui, depois recifre)
 tools\encrypt.mjs    gera Resources\app.bin e grava a chave no Program.cs
 Eletroguia.iss       script do instalador (Inno Setup)
+Resources\Eletroguia.ico ícone da marca usado pelo app e pelo instalador
 build.bat            publica o .exe e gera o instalador, nessa ordem

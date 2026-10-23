@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
@@ -9,8 +10,8 @@ static class Program
 {
     // Preenchido por tools/encrypt.mjs a cada build. Não edite à mão.
     //KEY-BEGIN
-    static readonly byte[] KA = { 185, 168, 55, 37, 39, 162, 148, 125, 199, 100, 69, 150, 188, 253, 118, 1, 40, 63, 211, 126, 192, 220, 28, 145, 137, 83, 166, 220, 143, 203, 28, 145 };
-    static readonly byte[] KM = { 9, 161, 176, 85, 34, 224, 26, 191, 164, 219, 84, 79, 147, 156, 100, 218, 68, 217, 73, 165, 54, 236, 165, 88, 230, 224, 189, 252, 91, 187, 214, 113 };
+    static readonly byte[] KA = { 213, 32, 154, 110, 37, 148, 179, 87, 37, 101, 237, 28, 148, 228, 98, 123, 176, 171, 198, 54, 194, 48, 139, 19, 104, 200, 51, 92, 40, 199, 113, 191 };
+    static readonly byte[] KM = { 144, 100, 168, 68, 172, 83, 250, 136, 72, 164, 145, 84, 220, 247, 229, 138, 224, 53, 115, 31, 160, 184, 250, 232, 228, 249, 108, 105, 211, 125, 6, 10 };
     //KEY-END
 
     [STAThread]
@@ -58,6 +59,7 @@ static class Program
         Array.Clear(key);
         return pt;
     }
+
 }
 
 sealed class MainForm : Form
@@ -74,6 +76,7 @@ sealed class MainForm : Form
         Height = 800;
         MinimumSize = new System.Drawing.Size(800, 560);
         StartPosition = FormStartPosition.CenterScreen;
+        WindowState = FormWindowState.Maximized;
         Controls.Add(wv);
         Load += async (_, _) => await IniciarAsync();
     }
@@ -89,6 +92,12 @@ sealed class MainForm : Form
             await wv.EnsureCoreWebView2Async(env);
 
             var c = wv.CoreWebView2;
+            c.DocumentTitleChanged += (_, _) =>
+            {
+                var pageTitle = c.DocumentTitle;
+                if (InvokeRequired) BeginInvoke(new Action(() => Text = pageTitle));
+                else Text = pageTitle;
+            };
             var s = c.Settings;
             // Modo "kiosk": sem barra de endereço, sem menu de contexto do
             // navegador, sem DevTools — a janela mostra só o app.
@@ -120,9 +129,16 @@ sealed class MainForm : Form
             {
                 if (!e.Uri.StartsWith("https://" + Host + "/") &&
                     !e.Uri.StartsWith("blob:") && !e.Uri.StartsWith("data:"))
+                {
                     e.Cancel = true;
+                    if (e.IsUserInitiated) OpenDonationLink(e.Uri);
+                }
             };
-            c.NewWindowRequested += (_, e) => e.Handled = true;
+            c.NewWindowRequested += (_, e) =>
+            {
+                e.Handled = true;
+                OpenDonationLink(e.Uri);
+            };
             c.PermissionRequested += (_, e) => e.State = CoreWebView2PermissionState.Deny;
 
             c.Navigate("https://" + Host + "/");
@@ -133,6 +149,17 @@ sealed class MainForm : Form
                 "Não foi possível iniciar o componente WebView2. Instale o \"Microsoft Edge WebView2 Runtime\" e abra o programa de novo.",
                 "Eletroguia", MessageBoxButtons.OK, MessageBoxIcon.Error);
             Close();
+        }
+    }
+    static void OpenDonationLink(string address)
+    {
+        if (Uri.TryCreate(address, UriKind.Absolute, out var uri) &&
+            uri.Scheme == Uri.UriSchemeHttps &&
+            uri.Host.Equals("livepix.gg", StringComparison.OrdinalIgnoreCase) &&
+            (uri.AbsolutePath.Equals("/twoboby", StringComparison.OrdinalIgnoreCase) ||
+             uri.AbsolutePath.StartsWith("/twoboby/", StringComparison.OrdinalIgnoreCase)))
+        {
+            Process.Start(new ProcessStartInfo(uri.ToString()) { UseShellExecute = true });
         }
     }
 }
